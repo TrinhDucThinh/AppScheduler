@@ -9,70 +9,58 @@ using System.Timers;
 using System.Threading;
 using System.Configuration;
 using System.IO;
+using AppScheduler.Helper;
+using System.Collections.Generic;
 
 namespace AppScheduler
 {
 	public class AppScheduler : System.ServiceProcess.ServiceBase
 	{
-		string configPath;
-        private static int time = 0;
-		System.Timers.Timer _timer=new System.Timers.Timer();
-		DataSet dsTasks=new DataSet();
-		string formatString="MM/dd/yyyy HH:mm:ss";
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
+        private static string configPath = AppDomain.CurrentDomain.BaseDirectory + ConfigurationManager.AppSettings["ConfigPath"];
+        private static string LogPath= AppDomain.CurrentDomain.BaseDirectory + ConfigurationManager.AppSettings["LogPath"];
+        
+		private System.Timers.Timer _timer=new System.Timers.Timer();
+		private DataSet dsTasks=new DataSet();
 		private System.ComponentModel.Container components = null;
+       
 
-        /// <summary>
-        /// Class that launches applications on demand.
-        /// </summary>
-		
+        //Using for test Window Service		
         public void OnDebug()
         {
+            string filepath = AppDomain.CurrentDomain.BaseDirectory ;
             OnStart(null);
         }
 
+        //Event Occur each timer elapse
 		void timeElapsed(object sender, ElapsedEventArgs args)
 		{
+
             //Read task file to update new tasks
-            Utilities.ReadTaskFile(configPath, ref dsTasks);
-
+            XmlHelper xmlHelper = new XmlHelper(configPath);
+            TextHelper txtHelper = new TextHelper(LogPath);
+            List<Task> listTask = xmlHelper.GetAll();
             //Loop task to excute task ;
-           
             DateTime currTime = DateTime.Now;
-            foreach (DataRow dRow in dsTasks.Tables["task"].Rows)
+            foreach (Task task in listTask)
             {
-                DateTime runTime = Convert.ToDateTime(dRow["time"]);
-                string action = dRow["action"].ToString();
-
-                if (currTime >= runTime)
+                if (currTime >= task.StartTime)
                 {
-                    //Code process action in here
-                    Utilities.WriteLogError(action);
-                    // Update the next run time
-                    string strInterval = dRow["repeat"].ToString().ToUpper();
-                    switch (strInterval)
+                    //Excute task
+                    txtHelper.WriteText(currTime+" Excuted "+task.Action);
+                    //Update Repeat
+                    switch (task.Repeat)
                     {
                         case "D":
-                            runTime = runTime.AddDays(1);
+                            task.StartTime = task.StartTime.AddDays(1);
                             break;
                         case "W":
-                            runTime = runTime.AddDays(7);
+                            task.StartTime = task.StartTime.AddDays(7);
                             break;
                         case "M":
-                            runTime = runTime.AddMonths(1);
+                            task.StartTime = task.StartTime.AddMonths(1);
                             break;
                     }
-
-                    dRow.Delete();
-
-                    dRow["time"] = runTime.ToString(formatString);
-                    dsTasks.AcceptChanges();
-                    StreamWriter sWrite = new StreamWriter(configPath);
-                    XmlTextWriter xWrite = new XmlTextWriter(sWrite);
-                    dsTasks.WriteXml(xWrite, XmlWriteMode.WriteSchema);
-                    xWrite.Close();
+                    xmlHelper.Update(task);
                 }
             }
         }
@@ -87,16 +75,16 @@ namespace AppScheduler
 		// The main entry point for the process
 		static void Main()
 		{
-            //System.ServiceProcess.ServiceBase[] ServicesToRun;
-            //ServicesToRun = new System.ServiceProcess.ServiceBase[] { new AppScheduler() };
-            //System.ServiceProcess.ServiceBase.Run(ServicesToRun);
-#if DEBUG
-            AppScheduler appScheduler = new AppScheduler();
-            appScheduler.OnDebug();
-            System.Threading.Thread.Sleep(Timeout.Infinite);
+            System.ServiceProcess.ServiceBase[] ServicesToRun;
+            ServicesToRun = new System.ServiceProcess.ServiceBase[] { new AppScheduler() };
+            System.ServiceProcess.ServiceBase.Run(ServicesToRun);
+//#if DEBUG
+//            AppScheduler appScheduler = new AppScheduler();
+//            appScheduler.OnDebug();
+//            System.Threading.Thread.Sleep(Timeout.Infinite);
 
-#else
-#endif
+//#else
+//#endif
         }
 
         /// <summary> 
@@ -134,9 +122,6 @@ namespace AppScheduler
 		protected override void OnStart(string[] args)
 		{
 			// TODO: Add code here to start your service.
-			configPath=ConfigurationSettings.AppSettings["configpath"];
-			
-         
 			_timer.Interval=60000;
 			_timer.Elapsed+=new ElapsedEventHandler(timeElapsed);
 			_timer.Start();
