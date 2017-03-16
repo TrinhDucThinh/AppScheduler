@@ -7,12 +7,24 @@ namespace AppScheduler.Helper
     public class Task
     {
        
-        public int Id { get; set; }
-        
-        public string Action { get; set; }
-      
-        public DateTime StartTime { get; set; }
+        public int TaskId { get; set; }
 
-        public string Repeat { get; set; }
+        public string Name { get; set; }
+
+        public string Action { get; set; }
+
+        public DateTime StartDate { get; set; }
+
+        public string RunTime { get; set; }
+
+        public DateTime NextTime { get; set; }
+
+        public string Type { get; set; }
+      
+        public int? Recur { get; set; }
+
+        public string Detail { get; set; }
+
+        public Boolean Status { get; set; }
     }
 }

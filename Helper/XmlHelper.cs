@@ -20,19 +20,26 @@ namespace AppScheduler.Helper
             XDocument doc = XDocument.Load(_filePath);
             try
             {
-                var list = (from c in doc.Descendants("task")
+                var list = (from c in doc.Descendants("Task")
                             select new Task
                             {
-                                Id = (int)c.Element("Id"),
+                                TaskId = (int)c.Element("TaskId"),
+                                Name = (string)c.Element("Name"),
                                 Action = (string)c.Element("Action"),
-                                StartTime = (DateTime)c.Element("StartTime"),
-                                Repeat = (string)c.Element("Repeat")
+                                StartDate = (DateTime)c.Element("StartDate"),
+                                RunTime = (string)c.Element("RunTime"),
+                                NextTime = (DateTime)c.Element("NextTime"),
+                                Type = (string)c.Element("Type"),
+                                Recur = (int)c.Element("Recur"),
+                                Detail = (string)c.Element("Detail"),
+                                Status = (int)c.Element("Status") ==1?true:false,
                             }
-                            ).OrderByDescending(x => x.Id).ToList();
+                            ).OrderByDescending(x => x.TaskId).ToList();
                 return list;
             }
-            catch
+            catch(Exception ex)
             {
+                string exception = ex.ToString();
                 return new List<Task>();
             }
         }
@@ -43,14 +50,19 @@ namespace AppScheduler.Helper
             try
             {
                 var note = (from c in doc.Descendants("Task")
-                            where c.Element("Id").Value == id.ToString()
+                            where c.Element("TaskId").Value == id.ToString()
                             select new Task
                             {
-                                Id = (int)c.Element("Id"),
+                                TaskId = (int)c.Element("TaskId"),
+                                Name = (string)c.Element("Name"),
                                 Action = (string)c.Element("Action"),
-                                StartTime = (DateTime)c.Element("Content"),
-                                Repeat = (string)c.Element("Repeat")
-
+                                StartDate = (DateTime)c.Element("Repeat"),
+                                RunTime = (string)c.Element("RunTime"),
+                                NextTime = (DateTime)c.Element("NextTime"),
+                                Type = (string)c.Element("Type"),
+                                Recur = (int)c.Element("Recur"),
+                                Detail = (string)c.Element("Detail"),
+                                Status = (int)c.Element("Status") == 1 ? true : false,
                             }
                             ).SingleOrDefault();
                 return note;
@@ -67,23 +79,29 @@ namespace AppScheduler.Helper
             try
             {
                 var lastId = (from c in doc.Descendants("Task")
-                              select (int)c.Element("Id")
+                              select (int)c.Element("TaskId")
                               ).OrderBy(x => x).Max();
-                task.Id = lastId + 1;
+                task.TaskId = lastId + 1;
             }
             catch
             {
-                task.Id = 1;
+                task.TaskId = 1;
             }
 
             var noteNode =
                     new XElement("Task",
-                        new XElement("Id", task.Id),
-                        new XElement("Action", task.Action),
-                        new XElement("StartTime", task.StartTime.ToLongDateString()),
-                        new XElement("Repeat", task.Repeat)
+                        new XElement("Id", task.TaskId),
+                        new XElement("Name", task.Name),
+                        new XElement("Action",task.Action),
+                        new XElement("StartDate", task.StartDate.ToShortDateString()),
+                        new XElement("RunTime", task.RunTime),
+                        new XElement("NextTime", task.NextTime.ToLongDateString()),
+                        new XElement("Type", task.StartDate.ToShortDateString()),
+                        new XElement("Repeat", task.Recur),
+                        new XElement("Detail", task.Detail),
+                        new XElement("Status", task.Status)
                     );
-            doc.Element("Tasks").Add(noteNode);
+            doc.Element("Config").Add(noteNode);
             doc.Save(_filePath);
         }
 
@@ -92,10 +110,17 @@ namespace AppScheduler.Helper
             try
             {
                 var doc = XDocument.Load(_filePath);
-                var noteNode = doc.Elements("Tasks").Elements("task").Where(x => x.Element("Id").Value == task.Id.ToString()).Take(1);
+                var noteNode = doc.Elements("Config").Elements("Task").Where(x => x.Element("TaskId").Value == task.TaskId.ToString()).Take(1);
+                noteNode.Elements("Name").SingleOrDefault().Value = task.Name;
                 noteNode.Elements("Action").SingleOrDefault().Value = task.Action;
-                noteNode.Elements("StartTime").SingleOrDefault().Value = task.StartTime.ToString("yyyy-MM-dd HH:mm:ss");
-                noteNode.Elements("Repeat").SingleOrDefault().Value = task.Repeat;
+                noteNode.Elements("StartDate").SingleOrDefault().Value = task.StartDate.ToString("yyyy-MM-dd");
+                noteNode.Elements("RunTime").SingleOrDefault().Value = task.RunTime;
+                noteNode.Elements("NextTime").SingleOrDefault().Value = task.NextTime.ToString("yyyy-MM-dd HH:mm:ss");
+                noteNode.Elements("Type").SingleOrDefault().Value = task.Type;
+                noteNode.Elements("Recur").SingleOrDefault().Value = task.Recur.ToString();
+                noteNode.Elements("Detail").SingleOrDefault().Value = task.Detail;
+                noteNode.Elements("Status").SingleOrDefault().Value = task.Status==true?"1":"0";
+
                 doc.Save(_filePath);
                 return true;
             }
