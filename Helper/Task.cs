@@ -21,10 +21,10 @@ namespace AppScheduler.Helper
 
         public string Type { get; set; }
       
-        public int? Recur { get; set; }
+        public string Recur { get; set; }
 
         public string Detail { get; set; }
 
-        public Boolean Status { get; set; }
+        public string  Status { get; set; }
     }
 }

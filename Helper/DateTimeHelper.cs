@@ -6,6 +6,7 @@ namespace AppScheduler.Helper
 {
     public static class DateTimeHelper
     {
+        //get all day from startDate to endDate
         public static List<DateTime> GetListDateTime(DateTime startDate, DateTime endDate)
         {
             //the number of days in our range of dates
@@ -20,6 +21,8 @@ namespace AppScheduler.Helper
                        .ToList();
             return myDates;
         }
+
+        //get string day in weekend 
         public static string[] SplitNeedDay(string needDays)
         {
             string[] arrDay = needDays.Split(';');
@@ -56,6 +59,7 @@ namespace AppScheduler.Helper
             return arrDay;
         }
 
+        //get day max in weekend choosed
         public static int GetMaxNeedDay(string needDays)
         {
             int max = -1;
@@ -67,6 +71,19 @@ namespace AppScheduler.Helper
             return max;
         }
 
+
+        //get max day in month choosed
+        public static int GetMaxDayTh(List<int> arrIntTh)
+        {
+            int max = -1;
+            for(int i = 0; i < arrIntTh.Count; i++)
+            {
+                if (arrIntTh[i] > max) max = arrIntTh[i];
+            }
+            return max;
+        }
+
+        //Check DateTime has been contained in the day choosing 
         public static bool CheckDayOfWeek(string needDays,DateTime dayCheck)
         {
             string[] arrDay = SplitNeedDay(needDays);
@@ -76,6 +93,31 @@ namespace AppScheduler.Helper
                 return true;
             }
             return false;
+        }
+
+        //get all dayth of month by year
+        public static List<DateTime>GetDateOfMonth(int month, int year)
+        {
+            return Enumerable.Range(1, DateTime.DaysInMonth(year, month))  // Days: 1, 2 ... 31 etc.
+                   .Select(day => new DateTime(year, month, day)) // Map each day to a date
+                   .ToList(); // Load dates into a list
+        }
+
+        //get
+        public static DateTime GetDayTh(int dayTh, int month, int year,int hh,int mm,int ss)
+        {
+            DateTime resultDate = new DateTime();
+            List<DateTime> listDateOfMonth = GetDateOfMonth(month, year);
+            foreach(DateTime date in listDateOfMonth)
+            {
+                if (date.Day == dayTh)
+                {
+                    resultDate = date;
+                    break;
+                }
+            }
+            string ResultDateTime = resultDate.ToString("yyyy-MM-dd HH:mm:ss");
+            return resultDate;
         }
     }
 }

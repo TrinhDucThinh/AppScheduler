@@ -30,9 +30,9 @@ namespace AppScheduler.Helper
                                 RunTime = (string)c.Element("RunTime"),
                                 NextTime = (DateTime)c.Element("NextTime"),
                                 Type = (string)c.Element("Type"),
-                                Recur = (int)c.Element("Recur"),
+                                Recur = (string)c.Element("Recur"),
                                 Detail = (string)c.Element("Detail"),
-                                Status = (int)c.Element("Status") ==1?true:false,
+                                Status = (string)c.Element("Status"),
                             }
                             ).OrderByDescending(x => x.TaskId).ToList();
                 return list;
@@ -60,9 +60,9 @@ namespace AppScheduler.Helper
                                 RunTime = (string)c.Element("RunTime"),
                                 NextTime = (DateTime)c.Element("NextTime"),
                                 Type = (string)c.Element("Type"),
-                                Recur = (int)c.Element("Recur"),
+                                Recur = (string)c.Element("Recur"),
                                 Detail = (string)c.Element("Detail"),
-                                Status = (int)c.Element("Status") == 1 ? true : false,
+                                Status = (string)c.Element("Status"),
                             }
                             ).SingleOrDefault();
                 return note;
@@ -119,7 +119,7 @@ namespace AppScheduler.Helper
                 noteNode.Elements("Type").SingleOrDefault().Value = task.Type;
                 noteNode.Elements("Recur").SingleOrDefault().Value = task.Recur.ToString();
                 noteNode.Elements("Detail").SingleOrDefault().Value = task.Detail;
-                noteNode.Elements("Status").SingleOrDefault().Value = task.Status==true?"1":"0";
+                noteNode.Elements("Status").SingleOrDefault().Value = task.Status.ToString();
 
                 doc.Save(_filePath);
                 return true;

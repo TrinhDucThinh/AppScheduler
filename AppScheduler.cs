@@ -21,44 +21,8 @@ namespace AppScheduler
         //Using for test Window Service
         public void OnDebug()
         {
-            string filepath = AppDomain.CurrentDomain.BaseDirectory;
-            var startDate = DateTime.Now;
-            var endDate = startDate.AddDays(7);
-            List<DateTime> listDateTime = DateTimeHelper.GetListDateTime(startDate, endDate);
-
-            List<string> myDaysOfWeek = listDateTime.Select(d => d.DayOfWeek.ToString()).ToList();
-            startDate = startDate
-           .AddDays(-(((startDate.DayOfWeek - DayOfWeek.Monday) + 7) % 7));
-
             //Test
-            DateTime currTime = DateTime.Now;
-            XmlHelper xmlHelper = new XmlHelper(configPath);
-            List<Task> listTask=xmlHelper.GetAll();
-            foreach(Task task in listTask)
-            {
-                if (currTime >= task.NextTime)
-                {
-                    //Excute task
-
-                    //Update NextTime
-                    switch (task.Type)
-                    {
-                        case "D":
-                            task.NextTime = task.NextTime.AddDays((double)task.Recur);
-                            xmlHelper.Update(task);
-                            break;
-                        case "W":
-                            task.NextTime=TaskHelper.GetNextTimeForWeek(task);
-                            xmlHelper.Update(task);
-                            break;
-                        case "M":
-                            break;
-                        default:
-                            break;
-                        
-                    }
-                }
-            }
+           
             OnStart(null);
         }
 
@@ -107,16 +71,16 @@ namespace AppScheduler
         // The main entry point for the process
         private static void Main()
         {
-            //System.ServiceProcess.ServiceBase[] ServicesToRun;
-            //ServicesToRun = new System.ServiceProcess.ServiceBase[] { new AppScheduler() };
-            //System.ServiceProcess.ServiceBase.Run(ServicesToRun);
-#if DEBUG
-            AppScheduler appScheduler = new AppScheduler();
-            appScheduler.OnDebug();
-            System.Threading.Thread.Sleep(Timeout.Infinite);
+            System.ServiceProcess.ServiceBase[] ServicesToRun;
+            ServicesToRun = new System.ServiceProcess.ServiceBase[] { new AppScheduler() };
+            System.ServiceProcess.ServiceBase.Run(ServicesToRun);
+            //#if DEBUG
+            //            AppScheduler appScheduler = new AppScheduler();
+            //            appScheduler.OnDebug();
+            //            System.Threading.Thread.Sleep(Timeout.Infinite);
 
-#else
-#endif
+            //#else
+            //#endif
         }
 
         /// <summary>
@@ -153,6 +117,36 @@ namespace AppScheduler
         protected override void OnStart(string[] args)
         {
             // TODO: Add code here to start your service.
+            DateTime currTime = DateTime.Now;
+            XmlHelper xmlHelper = new XmlHelper(configPath);
+            List<Task> listTask = xmlHelper.GetAll();
+            foreach (Task task in listTask)
+            {
+                if (currTime >= task.NextTime && task.Status == "1")
+                {
+                    //Excute task
+
+                    //Update NextTime
+                    switch (task.Type)
+                    {
+                        case "D":
+                            task.NextTime = task.NextTime.AddDays(Convert.ToDouble(task.Recur));
+                            xmlHelper.Update(task);
+                            break;
+                        case "W":
+                            task.NextTime = TaskHelper.GetNextTimeForWeek(task);
+                            xmlHelper.Update(task);
+                            break;
+                        case "M":
+                            task.NextTime = TaskHelper.GetNextTimeForMonth(task);
+                            xmlHelper.Update(task);
+                            break;
+                        default:
+                            break;
+
+                    }
+                }
+            }
             _timer.Interval = 60000;
             _timer.Elapsed += new ElapsedEventHandler(timeElapsed);
             _timer.Start();
