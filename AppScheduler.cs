@@ -71,16 +71,18 @@ namespace AppScheduler
         // The main entry point for the process
         private static void Main()
         {
+            //Release
             System.ServiceProcess.ServiceBase[] ServicesToRun;
             ServicesToRun = new System.ServiceProcess.ServiceBase[] { new AppScheduler() };
             System.ServiceProcess.ServiceBase.Run(ServicesToRun);
-            //#if DEBUG
-            //            AppScheduler appScheduler = new AppScheduler();
-            //            appScheduler.OnDebug();
-            //            System.Threading.Thread.Sleep(Timeout.Infinite);
+            //To Debug
+#if DEBUG
+            AppScheduler appScheduler = new AppScheduler();
+            appScheduler.OnDebug();
+            System.Threading.Thread.Sleep(Timeout.Infinite);
 
-            //#else
-            //#endif
+#else
+#endif
         }
 
         /// <summary>
