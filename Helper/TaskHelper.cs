@@ -17,10 +17,12 @@ namespace AppScheduler.Helper
             int test = (int)task.NextTime.DayOfWeek;
             if ((int)task.NextTime.DayOfWeek == DateTimeHelper.GetMaxNeedDay(task.Detail))
             {
+                //Get day the first of week
                 startDate = task.NextTime.AddDays(7 * (Convert.ToInt32(task.Recur)))
                 .AddDays(-(((task.NextTime.DayOfWeek - DayOfWeek.Monday) + 7) % 7));
             } else
             {
+                //Get day the first of week
                 startDate = task.NextTime
                 .AddDays(-(((task.NextTime.DayOfWeek - DayOfWeek.Monday) + 7) % 7));
             }
@@ -38,7 +40,6 @@ namespace AppScheduler.Helper
                         result = tempDate;
                         break;
                     }
-
                 }
             }
             return result;
