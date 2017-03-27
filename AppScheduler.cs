@@ -39,41 +39,25 @@ namespace AppScheduler
             {
                 if (currTime >= task.NextTime)
                 {
-                    //Excute task
-                    txtHelper.WriteText(currTime + " Excuted " + task.Action);
-                    //Update Repeat
-                    switch (task.Type)
-                    {
-                        case "D":
-                            //task.StartTime = task.StartTime.AddDays(1);
-                            break;
-
-                        case "W":
-                            //task.StartTime = task.StartTime.AddDays(7);
-                            break;
-
-                        case "M":
-                           // task.StartTime = task.StartTime.AddMonths(1);
-                            break;
-                    }
-                    xmlHelper.Update(task);
-                }
-                if (currTime >= task.NextTime)
-                {
-                    //Excute task
+                    
 
                     //Update NextTime
                     switch (task.Type)
                     {
                         case "D":
+                            //Excute task here
                             task.NextTime = task.NextTime.AddDays(Convert.ToDouble(task.Recur));
                             xmlHelper.Update(task);
                             break;
                         case "W":
+                            //Excute task here
+
                             task.NextTime = TaskHelper.GetNextTimeForWeek(task);
                             xmlHelper.Update(task);
                             break;
                         case "M":
+                            //Excute task here
+
                             task.NextTime = TaskHelper.GetNextTimeForMonth(task);
                             xmlHelper.Update(task);
                             break;
@@ -99,13 +83,13 @@ namespace AppScheduler
             ServicesToRun = new System.ServiceProcess.ServiceBase[] { new AppScheduler() };
             System.ServiceProcess.ServiceBase.Run(ServicesToRun);
             //To Debug
-#if DEBUG
-            AppScheduler appScheduler = new AppScheduler();
-            appScheduler.OnDebug();
-            System.Threading.Thread.Sleep(Timeout.Infinite);
+//#if DEBUG
+//            AppScheduler appScheduler = new AppScheduler();
+//            appScheduler.OnDebug();
+//            System.Threading.Thread.Sleep(Timeout.Infinite);
 
-#else
-#endif
+//#else
+//#endif
         }
 
         /// <summary>
