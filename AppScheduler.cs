@@ -58,6 +58,29 @@ namespace AppScheduler
                     }
                     xmlHelper.Update(task);
                 }
+                if (currTime >= task.NextTime)
+                {
+                    //Excute task
+
+                    //Update NextTime
+                    switch (task.Type)
+                    {
+                        case "D":
+                            task.NextTime = task.NextTime.AddDays(Convert.ToDouble(task.Recur));
+                            xmlHelper.Update(task);
+                            break;
+                        case "W":
+                            task.NextTime = TaskHelper.GetNextTimeForWeek(task);
+                            xmlHelper.Update(task);
+                            break;
+                        case "M":
+                            task.NextTime = TaskHelper.GetNextTimeForMonth(task);
+                            xmlHelper.Update(task);
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
         }
 
