@@ -4,7 +4,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppScheduler", "AppScheduler.csproj", "{67432B62-37D5-4D4D-A522-B0FE35BBCA5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebScheduler", "..\WebScheduler\WebScheduler.csproj", "{B1531F8F-B105-489B-86AB-604F8636C77A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSchedulers", "..\WebSchedulers\WebSchedulers.csproj", "{02BFA59B-9CC8-4524-9518-15BDCFDB1580}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,10 +16,10 @@ Global
 		{67432B62-37D5-4D4D-A522-B0FE35BBCA5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67432B62-37D5-4D4D-A522-B0FE35BBCA5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67432B62-37D5-4D4D-A522-B0FE35BBCA5F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B1531F8F-B105-489B-86AB-604F8636C77A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1531F8F-B105-489B-86AB-604F8636C77A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1531F8F-B105-489B-86AB-604F8636C77A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1531F8F-B105-489B-86AB-604F8636C77A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02BFA59B-9CC8-4524-9518-15BDCFDB1580}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02BFA59B-9CC8-4524-9518-15BDCFDB1580}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02BFA59B-9CC8-4524-9518-15BDCFDB1580}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02BFA59B-9CC8-4524-9518-15BDCFDB1580}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

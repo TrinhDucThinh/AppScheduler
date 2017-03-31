@@ -39,8 +39,6 @@ namespace AppScheduler
             {
                 if (currTime >= task.NextTime)
                 {
-                    
-
                     //Update NextTime
                     switch (task.Type)
                     {
@@ -79,17 +77,17 @@ namespace AppScheduler
         private static void Main()
         {
             //Release
-            System.ServiceProcess.ServiceBase[] ServicesToRun;
-            ServicesToRun = new System.ServiceProcess.ServiceBase[] { new AppScheduler() };
-            System.ServiceProcess.ServiceBase.Run(ServicesToRun);
+            //System.ServiceProcess.ServiceBase[] ServicesToRun;
+            //ServicesToRun = new System.ServiceProcess.ServiceBase[] { new AppScheduler() };
+            //System.ServiceProcess.ServiceBase.Run(ServicesToRun);
             //To Debug
-//#if DEBUG
-//            AppScheduler appScheduler = new AppScheduler();
-//            appScheduler.OnDebug();
-//            System.Threading.Thread.Sleep(Timeout.Infinite);
+#if DEBUG
+            AppScheduler appScheduler = new AppScheduler();
+            appScheduler.OnDebug();
+            System.Threading.Thread.Sleep(Timeout.Infinite);
 
-//#else
-//#endif
+#else
+#endif
         }
 
         /// <summary>
